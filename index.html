@@ -31,25 +31,39 @@
                     <input type="number" id="gasto" placeholder="Cantidad" step="0.01" required>
                 </div>
                 <div class="form-group">
-                    <label for="moneda">Moneda:</label>
-                    <select id="moneda" required>
-                        <option value="" disabled selected>Selecciona una moneda</option>
-                        <option value="USD">USD</option>
-                        <option value="$">$</option>
-                    </select>
+                    <label>Moneda:</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="monedaTipo" value="USD" required> USD
+                        </label>
+                        <label>
+                            <input type="radio" name="monedaTipo" value="$"> $
+                        </label>
+                    </div>
                 </div>
                 <div class="form-group">
+                    <label>Método de Pago:</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="metodoPago" value="Efectivo" required> Efectivo
+                        </label>
+                        <label>
+                            <input type="radio" name="metodoPago" value="Tarjeta de Crédito"> Tarjeta de Crédito
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group" id="cuota-group">
                     <label for="cuota">Cuotas:</label>
-                    <input type="number" id="cuota" placeholder="Número de cuotas" min="1" required>
+                    <input type="number" id="cuota" placeholder="Número de cuotas" min="1">
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="tarjeta-group">
                     <label for="tarjeta">Tarjeta de Crédito:</label>
-                    <select id="tarjeta" required>
+                    <select id="tarjeta">
                         <option value="" disabled selected>Selecciona una tarjeta</option>
-                        <option value="Visa">Visa</option>
-                        <option value="Mastercard">Mastercard</option>
-                        <option value="Amex">Amex</option>
-                        <!-- Añade más tarjetas según necesites -->
+                        <option value="Nativa Visa">Nativa Visa</option>
+                        <option value="Galicia Visa">Galicia Visa</option>
+                        <option value="Galicia Mastercard">Galicia Mastercard</option>
+                        <option value="Aurus (Bco Ctes)">Aurus (Bco Ctes)</option>
                     </select>
                 </div>
                 <button type="submit"><i class="fa fa-plus"></i> Agregar Gasto</button>
@@ -65,6 +79,7 @@
                         <th>Nombre del Gasto</th>
                         <th>Gasto</th>
                         <th>Moneda</th>
+                        <th>Método de Pago</th>
                         <th>Cuotas</th>
                         <th>Tarjeta</th>
                         <th>Acciones</th>
