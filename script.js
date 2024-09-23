@@ -2,9 +2,10 @@
 const expenseForm = document.getElementById('expense-form');
 const expensesTableBody = document.querySelector('#expenses-table tbody');
 const expensesChartCtx = document.getElementById('expensesChart').getContext('2d');
+const downloadExcelBtn = document.getElementById('download-excel');
 
-// Array para almacenar los gastos
-let expenses = [];
+// Array para almacenar los gastos (recuperado de localStorage si existe)
+let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
 
 // Función para renderizar la tabla de gastos
 function renderExpenses() {
@@ -17,7 +18,8 @@ function renderExpenses() {
         tr.innerHTML = `
             <td data-label="Fecha">${expense.fecha}</td>
             <td data-label="Nombre del Gasto">${expense.nombre}</td>
-            <td data-label="Gasto U$D">$${expense.gastoUSD.toFixed(2)}</td>
+            <td data-label="Monto">${expense.monto.toFixed(2)}</td>
+            <td data-label="Moneda">${expense.moneda}</td>
             <td data-label="Cuotas">${expense.cuota}</td>
             <td data-label="Tarjeta">${expense.tarjeta}</td>
             <td data-label="Acciones" class="actions">
@@ -26,6 +28,9 @@ function renderExpenses() {
         `;
         expensesTableBody.appendChild(tr);
     });
+
+    // Guardar los gastos en localStorage
+    localStorage.setItem('expenses', JSON.stringify(expenses));
 
     updateChart();
 }
@@ -36,11 +41,12 @@ expenseForm.addEventListener('submit', function(e) {
 
     const fecha = document.getElementById('fecha').value;
     const nombre = document.getElementById('nombre').value;
-    const gastoUSD = parseFloat(document.getElementById('gastoUSD').value);
+    const monto = parseFloat(document.getElementById('monto').value);
+    const moneda = document.getElementById('moneda').value;
     const cuota = parseInt(document.getElementById('cuota').value);
     const tarjeta = document.getElementById('tarjeta').value;
 
-    const newExpense = { fecha, nombre, gastoUSD, cuota, tarjeta };
+    const newExpense = { fecha, nombre, monto, moneda, cuota, tarjeta };
     expenses.push(newExpense);
 
     // Limpiar el formulario
@@ -63,7 +69,7 @@ let expensesChart;
 function updateChart() {
     // Agrupar gastos por tarjeta
     const gastosPorTarjeta = expenses.reduce((acc, curr) => {
-        acc[curr.tarjeta] = (acc[curr.tarjeta] || 0) + curr.gastoUSD;
+        acc[curr.tarjeta] = (acc[curr.tarjeta] || 0) + curr.monto;
         return acc;
     }, {});
 
@@ -107,22 +113,15 @@ function updateChart() {
     });
 }
 
+// Función para descargar la tabla como archivo Excel
+downloadExcelBtn.addEventListener('click', function() {
+    const wb = XLSX.utils.book_new(); // Crear nuevo libro de Excel
+    const ws = XLSX.utils.json_to_sheet(expenses); // Convertir los datos en una hoja de Excel
+    XLSX.utils.book_append_sheet(wb, ws, 'Gastos'); // Añadir la hoja al libro
+
+    // Descargar el archivo Excel
+    XLSX.writeFile(wb, 'gastos.xlsx');
+});
+
 // Inicializar la tabla y el gráfico
 renderExpenses();
-
-// Al inicio, cargar los gastos desde localStorage si existen
-if (localStorage.getItem('expenses')) {
-    expenses = JSON.parse(localStorage.getItem('expenses'));
-}
-
-function renderExpenses() {
-    // ... (código existente)
-
-    // Guardar en localStorage
-    localStorage.setItem('expenses', JSON.stringify(expenses));
-
-    updateChart();
-}
-
-// En la función deleteExpense también se actualiza localStorage automáticamente
-
