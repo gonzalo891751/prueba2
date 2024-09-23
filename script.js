@@ -109,3 +109,20 @@ function updateChart() {
 
 // Inicializar la tabla y el gráfico
 renderExpenses();
+
+// Al inicio, cargar los gastos desde localStorage si existen
+if (localStorage.getItem('expenses')) {
+    expenses = JSON.parse(localStorage.getItem('expenses'));
+}
+
+function renderExpenses() {
+    // ... (código existente)
+
+    // Guardar en localStorage
+    localStorage.setItem('expenses', JSON.stringify(expenses));
+
+    updateChart();
+}
+
+// En la función deleteExpense también se actualiza localStorage automáticamente
+
