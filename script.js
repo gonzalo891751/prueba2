@@ -1,127 +1,175 @@
-// Obtener referencias a elementos del DOM
-const expenseForm = document.getElementById('expense-form');
-const expensesTableBody = document.querySelector('#expenses-table tbody');
-const expensesChartCtx = document.getElementById('expensesChart').getContext('2d');
-const downloadExcelBtn = document.getElementById('download-excel');
-
-// Array para almacenar los gastos (recuperado de localStorage si existe)
-let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
-
-// Función para renderizar la tabla de gastos
-function renderExpenses() {
-    // Limpiar la tabla
-    expensesTableBody.innerHTML = '';
-
-    expenses.forEach((expense, index) => {
-        const tr = document.createElement('tr');
-
-        tr.innerHTML = `
-            <td data-label="Fecha">${expense.fecha}</td>
-            <td data-label="Nombre del Gasto">${expense.nombre}</td>
-            <td data-label="Monto">${expense.monto.toFixed(2)}</td>
-            <td data-label="Moneda">${expense.moneda}</td>
-            <td data-label="Cuotas">${expense.cuota}</td>
-            <td data-label="Tarjeta">${expense.tarjeta}</td>
-            <td data-label="Acciones" class="actions">
-                <button onclick="deleteExpense(${index})"><i class="fa fa-trash"></i></button>
-            </td>
-        `;
-        expensesTableBody.appendChild(tr);
-    });
-
-    // Guardar los gastos en localStorage
-    localStorage.setItem('expenses', JSON.stringify(expenses));
-
-    updateChart();
+/* Reset de estilos básicos */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-// Función para agregar un nuevo gasto
-expenseForm.addEventListener('submit', function(e) {
-    e.preventDefault();
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f6f8;
+    color: #333;
+    line-height: 1.6;
+}
 
-    const fecha = document.getElementById('fecha').value;
-    const nombre = document.getElementById('nombre').value;
-    const monto = parseFloat(document.getElementById('monto').value);
-    const moneda = document.getElementById('moneda').value;
-    const cuota = parseInt(document.getElementById('cuota').value);
-    const tarjeta = document.getElementById('tarjeta').value;
+header {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+}
 
-    const newExpense = { fecha, nombre, monto, moneda, cuota, tarjeta };
-    expenses.push(newExpense);
+main {
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+}
 
-    // Limpiar el formulario
-    expenseForm.reset();
+section {
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 
-    renderExpenses();
-});
+h2 {
+    margin-bottom: 15px;
+    color: #4CAF50;
+}
 
-// Función para eliminar un gasto
-function deleteExpense(index) {
-    if (confirm('¿Estás seguro de que deseas eliminar este gasto?')) {
-        expenses.splice(index, 1);
-        renderExpenses();
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button[type="submit"] {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table thead {
+    background-color: #4CAF50;
+    color: #fff;
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+.actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #4CAF50;
+    font-size: 18px;
+    transition: color 0.3s ease;
+}
+
+.actions button:hover {
+    color: #388E3C;
+}
+
+.download-btn {
+    margin-top: 15px;
+    background-color: #2196F3;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.download-btn:hover {
+    background-color: #1976D2;
+}
+
+footer {
+    text-align: center;
+    padding: 15px 0;
+    background-color: #4CAF50;
+    color: #fff;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .form-group {
+        flex-direction: column;
+    }
+
+    table thead {
+        display: none;
+    }
+
+    table, table tbody, table tr, table td {
+        display: block;
+        width: 100%;
+    }
+
+    table tr {
+        margin-bottom: 15px;
+    }
+
+    table td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+    }
+
+    table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 50%;
+        padding-left: 15px;
+        font-weight: bold;
+        text-align: left;
     }
 }
-
-// Función para actualizar el gráfico
-let expensesChart;
-
-function updateChart() {
-    // Agrupar gastos por tarjeta
-    const gastosPorTarjeta = expenses.reduce((acc, curr) => {
-        acc[curr.tarjeta] = (acc[curr.tarjeta] || 0) + curr.monto;
-        return acc;
-    }, {});
-
-    const labels = Object.keys(gastosPorTarjeta);
-    const data = Object.values(gastosPorTarjeta);
-
-    if (expensesChart) {
-        expensesChart.destroy();
-    }
-
-    expensesChart = new Chart(expensesChartCtx, {
-        type: 'pie',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Gastos por Tarjeta',
-                data: data,
-                backgroundColor: [
-                    '#FF6384',
-                    '#36A2EB',
-                    '#FFCE56',
-                    '#8BC34A',
-                    '#FF9800',
-                    '#9C27B0'
-                ],
-                hoverOffset: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                },
-                title: {
-                    display: true,
-                    text: 'Distribución de Gastos por Tarjeta de Crédito'
-                }
-            }
-        }
-    });
-}
-
-// Función para descargar la tabla como archivo Excel
-downloadExcelBtn.addEventListener('click', function() {
-    const wb = XLSX.utils.book_new(); // Crear nuevo libro de Excel
-    const ws = XLSX.utils.json_to_sheet(expenses); // Convertir los datos en una hoja de Excel
-    XLSX.utils.book_append_sheet(wb, ws, 'Gastos'); // Añadir la hoja al libro
-
-    // Descargar el archivo Excel
-    XLSX.writeFile(wb, 'gastos.xlsx');
-});
-
-// Inicializar la tabla y el gráfico
-renderExpenses();
