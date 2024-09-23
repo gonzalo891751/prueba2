@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Gastos</title>
+    <!-- Enlace a Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Enlace al archivo CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Registro de Gastos Mensuales</h1>
+    </header>
+
+    <main>
+        <section class="form-section">
+            <h2>Agregar Nuevo Gasto</h2>
+            <form id="expense-form">
+                <div class="form-group">
+                    <label for="fecha">Fecha:</label>
+                    <input type="date" id="fecha" required>
+                </div>
+                <div class="form-group">
+                    <label for="nombre">Nombre del Gasto:</label>
+                    <input type="text" id="nombre" placeholder="Descripción del gasto" required>
+                </div>
+                <div class="form-group">
+                    <label for="gastoUSD">Gasto en U$D:</label>
+                    <input type="number" id="gastoUSD" placeholder="Cantidad en dólares" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="cuota">Cuotas:</label>
+                    <input type="number" id="cuota" placeholder="Número de cuotas" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="tarjeta">Tarjeta de Crédito:</label>
+                    <select id="tarjeta" required>
+                        <option value="" disabled selected>Selecciona una tarjeta</option>
+                        <option value="Visa">Visa</option>
+                        <option value="Mastercard">Mastercard</option>
+                        <option value="Amex">Amex</option>
+                        <!-- Añade más tarjetas según necesites -->
+                    </select>
+                </div>
+                <button type="submit"><i class="fa fa-plus"></i> Agregar Gasto</button>
+            </form>
+        </section>
+
+        <section class="table-section">
+            <h2>Lista de Gastos</h2>
+            <table id="expenses-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Nombre del Gasto</th>
+                        <th>Gasto U$D</th>
+                        <th>Cuotas</th>
+                        <th>Tarjeta</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Las filas de gastos se agregarán dinámicamente aquí -->
+                </tbody>
+            </table>
+        </section>
+
+        <section class="chart-section">
+            <h2>Resumen de Gastos por Tarjeta</h2>
+            <canvas id="expensesChart"></canvas>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Registro de Gastos</p>
+    </footer>
+
+    <!-- Enlace a Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Enlace al archivo JS -->
+    <script src="script.js"></script>
+</body>
+</html>
